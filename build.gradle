@@ -1,0 +1,59 @@
+ext {
+    groovyVersion = '2.4.4'
+    guavaVersion = '19.0'
+    mockitoVersion = '1.10.19'
+    fastJsonVersion = "1.2.21"
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy {
+        cacheDynamicVersionsFor 0, 'seconds'
+        cacheChangingModulesFor 0, 'seconds'
+        force "org.codehaus.groovy:groovy-all:$groovyVersion"
+    }
+}
+
+buildscript {
+    ext {
+        gradleReleaseVersion = '2.3.4'
+    }
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.researchgate:gradle-release:$gradleReleaseVersion"
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    group 'com.commissar.handy'
+    version '1.0.0-SNAPSHOT'
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+
+subprojects {
+    apply plugin: 'idea'
+    version = rootProject.version
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+    repositories {
+        repositories {
+            mavenLocal()
+            jcenter()
+            mavenCentral()
+        }
+    }
+
+    dependencies {
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
